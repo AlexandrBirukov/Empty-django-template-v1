@@ -1,0 +1,30 @@
+[project]
+name = "Empty"
+version = "0.1.0"
+description = "Empty Django template for PDM package v1"
+authors = [{ name = "Alexandr", email = "birukov.system@gmail.com" }]
+dependencies = [
+    "django>=5.1.2",
+    "django-cleanup>=9.0.0",
+    "django-compressor>=4.5.1",
+    "django-debug-toolbar>=4.4.6",
+    "django-environ>=0.11.2",
+    "django-solo>=2.4.0",
+    "gunicorn>=23.0.0",
+    "psycopg2-binary>=2.9.10",
+]
+requires-python = "==3.13.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+migrate = "python manage.py migrate"
+start = "python manage.py runserver"
+post_init = { composite = ["pdm install", "migrate", "start"] }
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"

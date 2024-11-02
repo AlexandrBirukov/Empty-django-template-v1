@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+
+  database:
+    image: postgres:16
+    env_file:
+      - ./project/settings/.env
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+      - .:/app
+    ports:
+      - "127.0.0.1:5433:5432"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "127.0.0.1:6380:6379"
+
+volumes:
+  database_volume:

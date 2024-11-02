@@ -1,0 +1,76 @@
+version: "3"
+
+services:
+
+  djangoapp:
+    build: .
+    restart: always
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
+             gunicorn --chdir project -w 4 --bind :8000 project.wsgi:application"
+    env_file:
+      - project/settings/.env
+    volumes:
+      - .:/app
+    networks:
+      - database_network
+      - redis_network
+    depends_on:
+      - database
+      - redis
+
+  database:
+    image: postgres:16
+    restart: always
+    env_file:
+      - project/settings/.env
+    networks:
+      - database_network
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - redis_network
+
+  celery:
+    build: .
+    restart: always
+    command: celery -A project worker --loglevel=debug --concurrency=4
+    env_file:
+      - project/settings/.env
+    volumes:
+      - .:/app
+    networks:
+      - redis_network
+      - database_network
+    depends_on:
+      - database
+      - redis
+
+  celery_beat:
+    build: .
+    restart: always
+    command: celery -A project beat --loglevel=debug --pidfile=
+    env_file:
+      - project/settings/.env
+    volumes:
+      - .:/app
+    networks:
+      - redis_network
+      - database_network
+    depends_on:
+      - database
+      - redis
+
+networks:
+  database_network:
+    driver: bridge
+  redis_network:
+    driver: bridge
+
+volumes:
+  database_volume:

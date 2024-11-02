@@ -11,7 +11,7 @@ urlpatterns = [
 
     # robots.txt
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += i18n_patterns(
     # TODO: сюда урлы приложений
@@ -25,5 +25,5 @@ if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns += [
-                       path('__debug__/', include(debug_toolbar.urls)),
-                   ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

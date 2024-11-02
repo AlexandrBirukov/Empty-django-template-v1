@@ -9,6 +9,7 @@
 ### Установка:
 
 ```
+brew install pdm
 pdm init git@github.com:AlexandrBirukov/Empty-django-template-v1.git
 ```
 
